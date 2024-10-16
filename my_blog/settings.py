@@ -20,6 +20,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(BASE_DIR/".env")
+print(env('AWS_ACCESS_KEY_ID') , 'access key')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -178,6 +179,10 @@ ACCOUNT_EMAIL_VERIFICATION = 'optional'
 # default auth class
 REST_FRAMEWORK = {
 
+    'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',  
+    ),
+
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated', 
     ),
@@ -234,24 +239,27 @@ AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')  
 AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME') 
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-
 AWS_S3_SIGNATURE_VERSION="s3v4"
 
-# S3 configurations for media files
 AWS_S3_FILE_OVERWRITE = False  # Avoid overwriting files with the same name
-AWS_DEFAULT_ACL = None  # Follow the S3 bucket policy
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+# AWS_DEFAULT_ACL = None  # Follow the S3 bucket policy
 AWS_LOCATION = 'media'
 
-# Static files (CSS, JavaScript, Images)
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STORAGES = {
+    # media file (image) management
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage"
+    },
 
-# Media files (uploads)
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # css and js file management
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage"
+
+    },
+}
 
 # URL for accessing media files
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 
-# Default file storage
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Boto3Storage'
+
 
