@@ -1,0 +1,21 @@
+# Ignore Python compiled files
+*.pyc
+__pycache__/
+
+# Ignore environment directories
+venv/
+env/
+.env
+
+# Ignore other unnecessary files
+*.log
+*.db
+*.sqlite3
+*.pdb
+*.egg-info/
+*.egg
+.DS_Store
+*.bak
+*.tmp
+# Ignore all images
+blog_images/*
