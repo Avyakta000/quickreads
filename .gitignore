@@ -10,7 +10,7 @@ env/
 # Ignore other unnecessary files
 *.log
 *.db
-*.sqlite3
+# *.sqlite3
 *.pdb
 *.egg-info/
 *.egg
