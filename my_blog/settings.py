@@ -240,6 +240,7 @@ AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME') 
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_SIGNATURE_VERSION="s3v4"
+AWS_S3_FILE_EXPIRE = 200 #  Pre-signed URL expiration (in seconds)
 
 AWS_S3_FILE_OVERWRITE = False  # Avoid overwriting files with the same name
 # AWS_DEFAULT_ACL = None  # Follow the S3 bucket policy

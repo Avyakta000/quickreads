@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
 from django.db import models
+from .services.s3_service import S3Service
 
 class BlogViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
@@ -200,3 +201,31 @@ class RecommendedReadsView(APIView):
         blog_data = BlogSerializer(recommended_blogs, many=True).data
         
         return Response(blog_data)
+
+
+# in order to save media files directly from client to s3 we need to generate a presigned url which is more reliable and secure
+class GeneratePresignedURLView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            print('Pre-signed URL request by client')
+
+            # Extract file_name and file_type from the request data
+            file_name = request.data.get('fileName')
+            file_type = request.data.get('fileType')
+
+            if not file_name or not file_type:
+                return Response({'error': 'File name and file type are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Call S3Service to generate the presigned URL
+            presigned_url = S3Service.generate_presigned_url(file_name, file_type)
+
+            # Return the data using DRF's Response
+            return Response({
+                'url': presigned_url,
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
