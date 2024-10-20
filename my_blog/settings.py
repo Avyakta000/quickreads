@@ -72,12 +72,12 @@ SITE_ID = 1
 
 
 MIDDLEWARE = [
-    # cors header middleware
-    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     # allauth middleware
     'allauth.account.middleware.AccountMiddleware', 
+    # cors header middleware
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -210,8 +210,19 @@ REST_AUTH = {
     'OLD_PASSWORD_FIELD_ENABLED': True,
     'REGISTER_SERIALIZER': 'myaccount.serializers.CustomRegisterSerializer',
 }
+# Social auth (google) callback uri
+GOOGLE_CALLBACK_URL = env('GOOGLE_CALLBACK_URL')
 
-# custom adapter
+# Add your allauth settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+# custom adapter admin (unsure but need to get back on this later)
 ACCOUNT_ADAPTER = 'myaccount.serializers.CustomAccountAdapter'
 
 # cors headers

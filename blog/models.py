@@ -88,9 +88,11 @@ class BlogImage(models.Model):
         return f"Image for {self.blog.title}"
 
 class UserInterest(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     categories = models.ManyToManyField(Category, blank=True)
     topics = models.ManyToManyField(Topic, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True) 
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class Comment(models.Model):

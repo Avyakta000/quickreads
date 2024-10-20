@@ -2,8 +2,8 @@ from rest_framework import viewsets, generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Blog, BlogView, Comment, UserInterest
-from .serializers import BlogSerializer, BlogCreateSerializer, CommentSerializer, UserInterestSerializer
+from .models import Category, Topic, Blog, BlogView, Comment, UserInterest
+from .serializers import BlogSerializer, BlogCreateSerializer, CommentSerializer, UserInterestSerializer, CategorySerializer, TopicSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.exceptions import ValidationError
@@ -11,6 +11,21 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db import models
 from .services.s3_service import S3Service
+
+# View to get all categories
+class CategoryListView(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+# API view to get all topics under a specific category
+class TopicListView(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = TopicSerializer
+
+    def get_queryset(self):
+        category_slug = self.kwargs.get('category_slug')
+        return Topic.objects.filter(category__slug=category_slug)
 
 class BlogViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
@@ -171,14 +186,27 @@ class BlogListView(generics.ListAPIView):
 class UserInterestViewSet(viewsets.ModelViewSet):
     serializer_class = UserInterestSerializer
     permission_classes = [IsAuthenticated]
-    queryset = UserInterest.objects.all()  # Add this line
+    queryset = UserInterest.objects.all() 
 
     def get_queryset(self):
         return UserInterest.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
+        categories = self.request.data.get('categories')
+        topics = self.request.data.get('topics')
+        if not (categories or topics):
+            raise ValidationError({'detail': 'Either categories or Topics must be included!!'})
         serializer.save(user=self.request.user)
 
+    def update(self, request, *args, **kwargs):
+        categories = request.data.get('categories', [])
+        topics = request.data.get('topics', [])
+        print(categories, topics, 'cat top ')
+        if not (categories or topics):
+            raise ValidationError({'detail': 'Either categories or topics must be included!'})
+        return super().update(request, *args, **kwargs)    
+
+    # perform_update vs update ?
     # def perform_update(self, serializer):
     #     user_interest = self.get_queryset().first()
     #     serializer.save(user=user_interest.user)

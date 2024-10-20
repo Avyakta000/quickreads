@@ -2,7 +2,7 @@
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import BlogViewSet, CommentViewSet, BlogListView, UserInterestViewSet, RecommendedReadsView, GeneratePresignedURLView
+from .views import CategoryListView, TopicListView, BlogViewSet, CommentViewSet, BlogListView, UserInterestViewSet, RecommendedReadsView, GeneratePresignedURLView
 
 router = DefaultRouter()
 router.register(r'blogs', BlogViewSet)
@@ -11,6 +11,9 @@ router.register(r'preferences', UserInterestViewSet)
 
 urlpatterns = [
     path('', include(router.urls)), 
+    path('categories/', CategoryListView.as_view(), name='category-list'),
+    path('categories/<slug:category_slug>/topics/', TopicListView.as_view(), name='topic-list'),
+
     path('reads/', BlogListView.as_view(), name='blog_list'),
     path('recommended-reads/', RecommendedReadsView.as_view(), name='recommended-blogs'),
 

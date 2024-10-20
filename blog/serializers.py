@@ -13,6 +13,20 @@ from datetime import datetime
 #     def get_full_name(self, obj):
 #         return f"{obj.first_name} {obj.last_name}"
 
+class TopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topic
+        fields = ['id', 'name', 'slug', 'category']
+
+class CategorySerializer(serializers.ModelSerializer):
+    topics = TopicSerializer(many=True)
+    # topics = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'slug', 'category_image', 'topics']
+
+
 class BlogImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogImage

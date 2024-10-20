@@ -10,7 +10,8 @@ from allauth.account.utils import send_email_confirmation
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.conf import settings
 
 class ResendVerificationEmailView(APIView):
     permission_classes = [IsAuthenticated]
@@ -23,9 +24,10 @@ class ResendVerificationEmailView(APIView):
         return Response({"detail": "Email already verified."}, status=status.HTTP_400_BAD_REQUEST)
 
 class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Grant, use this
+    # permission_classes = [AllowAny]
     adapter_class = GoogleOAuth2Adapter
-    callback_url = "http://localhost:5173/"
     client_class = OAuth2Client
+    callback_url = settings.GOOGLE_CALLBACK_URL
 
 def email_confirmation(request, key):
     return redirect(f"http://localhost:5173/dj-rest-auth/registration/account-confirm-email/{key}")
