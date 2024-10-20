@@ -257,3 +257,54 @@ class GeneratePresignedURLView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class DeleteFileView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            # Extract fileUrl from the request data
+            file_url = request.data.get('imageUrl')
+            print(file_url, "delete url")
+            if not file_url:
+                return Response({'error': 'File URL is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Extract the file name (key) from the URL
+            file_name = file_url.split('.com/')[-1]
+            print("file name", file_name)
+            # Call the delete method from S3Service
+            S3Service.delete_file_from_s3(file_name)
+
+            # Return a success response
+            return Response({'message': 'File deleted successfully'}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# class GeneratePresignedURLView(APIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request):
+#         try:
+#             # Extract file_name, action, and (optionally) file_type from the request data
+#             file_name = request.data.get('fileName')
+#             action = request.data.get('action')  # 'upload' or 'delete'
+#             file_type = request.data.get('fileType') if action == 'upload' else None
+#             print("line 1")
+#             if not file_name or not action:
+#                 return Response({'error': 'File name and action are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+#             # Generate the appropriate presigned URL based on the action
+#             if action == 'upload':
+#                 presigned_url = S3Service.generate_presigned_url(file_name, file_type)
+#             elif action == 'delete':
+#                 presigned_url = S3Service.generate_presigned_delete_url(file_name)
+#             else:
+#                 return Response({'error': 'Invalid action specified'}, status=status.HTTP_400_BAD_REQUEST)
+
+#             # Return the presigned URL
+#             return Response({
+#                 'url': presigned_url,
+#             }, status=status.HTTP_200_OK)
+
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

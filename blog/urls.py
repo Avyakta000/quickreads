@@ -2,7 +2,7 @@
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CategoryListView, TopicListView, BlogViewSet, CommentViewSet, BlogListView, UserInterestViewSet, RecommendedReadsView, GeneratePresignedURLView
+from .views import CategoryListView, TopicListView, BlogViewSet, CommentViewSet, BlogListView, UserInterestViewSet, RecommendedReadsView, GeneratePresignedURLView, DeleteFileView
 
 router = DefaultRouter()
 router.register(r'blogs', BlogViewSet)
@@ -19,6 +19,9 @@ urlpatterns = [
 
     # presigned url for client to upload files directly in s3
     path('generate_presigned_url/', GeneratePresignedURLView.as_view(), name='generate_presigned_url'),
+
+    # this needs to be done from fronted however hybrid approach have taken in use to put an obj in s3 after pressigned url is recieved from backend server and to delete an object by directly making a request on server
+    path('generate_delete_presigned_url/', DeleteFileView.as_view(), name='generate_delete_presigned_url'),
 
 
 ]
