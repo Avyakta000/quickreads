@@ -6,26 +6,35 @@ from .models import Category, Topic, Blog, BlogView, Comment, UserInterest
 from .serializers import BlogSerializer, BlogCreateSerializer, CommentSerializer, UserInterestSerializer, CategorySerializer, TopicSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, AuthenticationFailed
 from django.utils import timezone
 from datetime import timedelta
 from django.db import models
 from .services.s3_service import S3Service
 
-# View to get all categories
-class CategoryListView(generics.ListAPIView):
-    permission_classes = [AllowAny]
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+# fetch all categories and tags
+class FetchCategoriesAndTagsView(APIView):
 
-# API view to get all topics under a specific category
-class TopicListView(generics.ListAPIView):
-    permission_classes = [AllowAny]
-    serializer_class = TopicSerializer
+    # permission_classes = [AllowAny]
+    def get(self, request):
+        try:
+            categories = Category.objects.all()
+            topics = Topic.objects.all()
+            
+            categories_serializer = CategorySerializer(categories, many=True)
+            topics_serializer = TopicSerializer(topics, many=True)
 
-    def get_queryset(self):
-        category_slug = self.kwargs.get('category_slug')
-        return Topic.objects.filter(category__slug=category_slug)
+            return Response({
+                'categories': categories_serializer.data,
+                'topics': topics_serializer.data,
+            })
+        except Exception as e:
+            # Log the exception if needed
+            return Response({
+                'error': str(e),
+                'message': 'Failed to retrieve categories and topics.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class BlogViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
@@ -45,12 +54,13 @@ class BlogViewSet(viewsets.ModelViewSet):
         print('perform create working, user',self.request.user, self.request.META)
 
         if self.request.user.is_anonymous:
-            raise ValidationError({'detail': 'Unauthorized !!'})
+            raise AuthenticationFailed({'detail': 'Unauthorized !!'})
+            # raise ValidationError({'detail': 'Unauthorized !!'})
         try:
            serializer.save(author=self.request.user) # Save the blog instance
         except Exception as e: 
            print(f'Error occurred while saving: {e}') 
-           raise ValidationError({'detail': 'An error occurred while saving the blog.'})
+           raise ValidationError({'detail': f'An error occurred while saving the blog. {e}'})
     
 
     # Likes/Dislikes    
@@ -308,3 +318,19 @@ class DeleteFileView(APIView):
 
 #         except Exception as e:
 #             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# View to get all categories
+# class CategoryListView(generics.ListAPIView):
+#     permission_classes = [AllowAny]
+#     queryset = Category.objects.all()
+#     serializer_class = CategorySerializer
+
+# API view to get all topics under a specific category
+# class TopicListView(generics.ListAPIView):
+#     permission_classes = [AllowAny]
+#     serializer_class = TopicSerializer
+
+#     def get_queryset(self):
+#         category_slug = self.kwargs.get('category_slug')
+#         return Topic.objects.filter(category__slug=category_slug)

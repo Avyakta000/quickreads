@@ -16,15 +16,15 @@ from datetime import datetime
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
-        fields = ['id', 'name', 'slug', 'category']
+        fields = ['id', 'name', 'slug']
 
 class CategorySerializer(serializers.ModelSerializer):
-    topics = TopicSerializer(many=True)
+    # topics = TopicSerializer(many=True)
     # topics = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'slug', 'category_image', 'topics']
+        fields = ['id', 'name', 'slug', 'category_image']
 
 
 class BlogImageSerializer(serializers.ModelSerializer):
@@ -47,7 +47,7 @@ class BlogSerializer(serializers.ModelSerializer):
     views_count = serializers.IntegerField(source='views')
     author_full_name = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
-    categories = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
     topics = serializers.SerializerMethodField()
     
     # format datetime in readible format
@@ -56,7 +56,7 @@ class BlogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = ['id', 'title', 'slug', 'content', 'author_full_name', 'categories', 'topics', 'images', 'comments', 'likes_count', 'views_count', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'slug', 'content', 'author_full_name', 'category', 'topics', 'images', 'comments', 'likes_count', 'views_count', 'created_at', 'updated_at']
         # fields = ['id', 'title', 'content', 'categories', 'topics', 'images', 'comments', 'created_at', 'updated_at']
         # read_only_fields = ['author', 'likes', 'views']
 
@@ -66,8 +66,8 @@ class BlogSerializer(serializers.ModelSerializer):
     def get_author_full_name(self, obj):
         return f"{obj.author.first_name} {obj.author.last_name}" if obj.author else "No Author"
 
-    def get_categories(self, obj):
-        return [category.name for category in obj.categories.all()] if obj.categories else []
+    def get_category(self, obj):
+        return obj.categories.name 
         
     def get_topics(self, obj):
         return [topics.name for topics in obj.topics.all()] if obj.topics else []
@@ -82,16 +82,16 @@ class BlogCreateSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'content', 'categories', 'topics', 'images', 'created_at', 'updated_at']
     
     def create(self, validated_data):
-        print('blog create serializer create method')
+        print('blog create serializer create method',validated_data)
         images_data = validated_data.pop('images', [])
-        categories = validated_data.pop('categories', [])
+        category = validated_data.pop('categories', [])
         topics = validated_data.pop('topics', [])
         
-        print(validated_data, categories, topics,'----validated_data')
-        blog = Blog.objects.create(**validated_data)
+        print(validated_data, category, topics,'----validated_data')
+        blog = Blog.objects.create(**validated_data, categories=category)
 
         # Set categories and topics after blog creation
-        blog.categories.set(categories)
+        # blog.categories.set(categories)
         blog.topics.set(topics)
 
         for image_data in images_data:
@@ -102,17 +102,20 @@ class BlogCreateSerializer(serializers.ModelSerializer):
         # Update the blog instance fields
         instance.title = validated_data.get('title', instance.title)
         instance.content = validated_data.get('content', instance.content)
-        instance.save()
 
         # Handle categories and topics if they exist in validated_data
-        categories = validated_data.get('categories')
-        if categories is not None:
-            instance.categories.set(categories)
+        category = validated_data.get('categories')
+        if category is not None:
+           instance.categories = category
+        # categories = validated_data.get('categories')
+        # if categories is not None:
+        #     instance.categories.set(categories)
 
         topics = validated_data.get('topics')
         if topics is not None:
             instance.topics.set(topics)
 
+        instance.save()
         # Handle image uploads
         images_data = validated_data.pop('images', [])
         for image_data in images_data:
