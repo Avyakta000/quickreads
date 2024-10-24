@@ -56,7 +56,7 @@ class BlogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = ['id', 'title', 'slug', 'content', 'author_full_name', 'category', 'topics', 'images', 'comments', 'likes_count', 'views_count', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'slug', 'content', 'author_full_name', 'category', 'topics', 'images', 'cover_image', 'comments', 'likes_count', 'views_count', 'created_at', 'updated_at']
         # fields = ['id', 'title', 'content', 'categories', 'topics', 'images', 'comments', 'created_at', 'updated_at']
         # read_only_fields = ['author', 'likes', 'views']
 
@@ -79,7 +79,7 @@ class BlogCreateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Blog
-        fields = ['id', 'title', 'content', 'categories', 'topics', 'images', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'content', 'categories', 'topics', 'images', 'cover_image', 'created_at', 'updated_at']
     
     def create(self, validated_data):
         print('blog create serializer create method',validated_data)
@@ -131,3 +131,20 @@ class UserInterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInterest
         fields = ['id', 'categories', 'topics']
+
+class UserInterestDetailSerializer(serializers.ModelSerializer):
+
+    category_names = serializers.SerializerMethodField()
+    topic_names = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserInterest
+        fields = ['category_names', 'topic_names']
+
+    # Method to fetch category names instead of IDs
+    def get_category_names(self, obj):
+        return [category.name for category in obj.categories.all()]
+
+    # Method to fetch topic names instead of IDs
+    def get_topic_names(self, obj):
+        return [topic.name for topic in obj.topics.all()]        

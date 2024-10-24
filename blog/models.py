@@ -38,6 +38,8 @@ class Blog(models.Model):
 
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True) 
+    cover_image = models.ImageField(upload_to='quicklit_uploads/', blank=True)
+
     content = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     categories = models.ForeignKey(Category, related_name='blogs', on_delete=models.CASCADE)
@@ -47,7 +49,6 @@ class Blog(models.Model):
     views = models.PositiveIntegerField(default=0)
     unique_views = models.PositiveIntegerField(default=0)  
     extended_views = models.PositiveIntegerField(default=0)  
-
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

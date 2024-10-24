@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Category, Topic, Blog, BlogView, Comment, UserInterest
-from .serializers import BlogSerializer, BlogCreateSerializer, CommentSerializer, UserInterestSerializer, CategorySerializer, TopicSerializer
+from .serializers import BlogSerializer, BlogCreateSerializer, CommentSerializer, UserInterestSerializer, CategorySerializer, TopicSerializer, UserInterestDetailSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.exceptions import ValidationError, AuthenticationFailed
@@ -197,6 +197,12 @@ class UserInterestViewSet(viewsets.ModelViewSet):
     serializer_class = UserInterestSerializer
     permission_classes = [IsAuthenticated]
     queryset = UserInterest.objects.all() 
+
+    def get_serializer_class(self):
+        # Use different serializers for read and write operations
+        if self.action in ['list', 'retrieve']:
+            return UserInterestDetailSerializer  # For fetching (GET)
+        return UserInterestSerializer  # For posting/updating (POST, PUT, PATCH)
 
     def get_queryset(self):
         return UserInterest.objects.filter(user=self.request.user)
