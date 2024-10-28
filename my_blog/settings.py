@@ -64,7 +64,6 @@ INSTALLED_APPS = [
     'storages',
     # local app
     "myaccount",
-    'channels',
     'blog', 
 ]
 # Set the site ID
@@ -103,21 +102,8 @@ TEMPLATES = [
     },
 ]
 
+# WSGi Gatewaay
 WSGI_APPLICATION = 'my_blog.wsgi.application'
-
-# ASGi server
-ASGI_APPLICATION = 'my_blog.asgi.application'
-
-# Configure Redis for channel layers
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],  
-        },
-    },
-}
-
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
