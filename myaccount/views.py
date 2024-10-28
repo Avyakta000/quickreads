@@ -69,7 +69,6 @@ class CustomLoginView(LoginView):
 
         # Add the expiration time to the response data
         response.data['refresh_token_expiration'] = refresh_token_expiration_iso
-        print(refresh_token_expiration, refresh_token_expiration_iso, '_ and iso')
                 
         return response
 

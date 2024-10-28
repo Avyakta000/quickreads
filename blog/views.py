@@ -241,8 +241,8 @@ class RecommendedReadsView(APIView):
     def get(self, request):
         user_interests = UserInterest.objects.filter(user=request.user).first()
 
-        print(request.COOKIES.get('refresh'), ' refresh cookie')
-        print(request.COOKIES.get('access'), ' access cookie')
+        # print(request.COOKIES.get('refresh'), ' refresh cookie')
+        # print(request.COOKIES.get('access'), ' access cookie')
         
         if not user_interests:
             return Response({"message": "No interests found for the user."}, status=404)
@@ -265,7 +265,7 @@ class GeneratePresignedURLView(APIView):
 
     def post(self, request):
         try:
-            print('Pre-signed URL request by client')
+            # print('Pre-signed URL request by client')
 
             # Extract file_name and file_type from the request data
             file_name = request.data.get('fileName')
@@ -292,13 +292,13 @@ class DeleteFileView(APIView):
         try:
             # Extract fileUrl from the request data
             file_url = request.data.get('imageUrl')
-            print(file_url, "delete url")
+            # print(file_url, "delete url")
             if not file_url:
                 return Response({'error': 'File URL is required'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Extract the file name (key) from the URL
             file_name = file_url.split('.com/')[-1]
-            print("file name", file_name)
+            # print("file name", file_name)
             # Call the delete method from S3Service
             S3Service.delete_file_from_s3(file_name)
 

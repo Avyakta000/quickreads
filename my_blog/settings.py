@@ -206,6 +206,9 @@ from datetime import timedelta
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': env("JWT_SECRET")
 }
 
 
@@ -218,6 +221,9 @@ REST_AUTH = {
     'SESSION_LOGIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': True,
     'REGISTER_SERIALIZER': 'myaccount.serializers.CustomRegisterSerializer',
+
+    'JWT_TOKEN_CLAIMS_SERIALIZER': 'myaccount.serializers.CustomTokenObtainPairSerializer',
+
 }
 # Social auth (google) callback uri
 GOOGLE_CALLBACK_URL = env('GOOGLE_CALLBACK_URL')

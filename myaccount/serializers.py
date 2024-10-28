@@ -56,3 +56,18 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         user.save()
         return user
 
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from blog.models import UserInterest
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Check if the user has an interests record
+        has_preferences = UserInterest.objects.filter(user=user).exists()
+        token['hasPreferences'] = has_preferences
+        print(token, 'custom token')
+
+        return token
