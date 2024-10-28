@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'storages',
     # local app
     "myaccount",
+    'channels',
     'blog', 
 ]
 # Set the site ID
@@ -103,6 +104,19 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'my_blog.wsgi.application'
+
+# ASGi server
+ASGI_APPLICATION = 'my_blog.asgi.application'
+
+# Configure Redis for channel layers
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],  
+        },
+    },
+}
 
 
 # Database
@@ -204,8 +218,8 @@ REST_FRAMEWORK = {
 # simple jwt
 from datetime import timedelta
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 

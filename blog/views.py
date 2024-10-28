@@ -137,8 +137,16 @@ class BlogViewSet(viewsets.ModelViewSet):
 # comment viewset
 class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        blog_id = self.request.query_params.get('blog_id')
+    
+        if blog_id:
+           return Comment.objects.filter(blog_id=blog_id)
+            # raise ValidationError({'detail': 'blog_id parameter is required to fetch comments.'})
+        # Filter comments by blog_id if provided
+        return Comment.objects.all()
 
     def perform_create(self, serializer):
         print('perform create')

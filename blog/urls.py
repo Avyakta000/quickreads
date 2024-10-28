@@ -6,7 +6,7 @@ from .views import BlogViewSet, CommentViewSet, BlogListView, UserInterestViewSe
 # CategoryListView, TopicListView,
 router = DefaultRouter()
 router.register(r'blogs', BlogViewSet)
-router.register(r'comments', CommentViewSet)
+router.register(r'comments', CommentViewSet, basename='comment')
 router.register(r'preferences', UserInterestViewSet)
 
 urlpatterns = [

@@ -3,16 +3,18 @@ from .models import Blog, BlogImage, Comment, Category, Topic, UserInterest
 from myaccount.models import User
 from datetime import datetime
 
-# class AuthorSerializer(serializers.ModelSerializer):
-#     full_name = serializers.SerializerMethodField()
+class AuthorSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
 
-#     class Meta:
-#         model = User
-#         fields = ['full_name']  
+    class Meta:
+        model = User
+        fields = ['id', 'full_name']  
 
-#     def get_full_name(self, obj):
-#         return f"{obj.first_name} {obj.last_name}"
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
 
+
+# category and comments start......................................
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
@@ -25,21 +27,32 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'slug', 'category_image']
+# category and topics end...........................................
 
 
+# comments start....................................................
+class RecursiveCommentSerializer(serializers.Serializer):
+    """Recursive serializer to handle nested comments."""
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+
+class CommentSerializer(serializers.ModelSerializer):
+    replies = RecursiveCommentSerializer(many=True, read_only=True)
+    author = AuthorSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'blog', 'author', 'text', 'replies', 'created_at']
+        read_only_fields = ['replies']
+# comments end........................................................
+
+
+# blogs serializer start..............................................
 class BlogImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogImage
         fields = ['id', 'image', 'uploaded_at']
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model = Comment
-        fields = ['id', 'blog', 'author', 'text', 'created_at']
-
 
 class BlogSerializer(serializers.ModelSerializer):
     images = BlogImageSerializer(many=True, read_only=True)
@@ -122,8 +135,10 @@ class BlogCreateSerializer(serializers.ModelSerializer):
             BlogImage.objects.create(blog=instance, image=image_data)
 
         return instance
+# blogs serializers end.................................................
 
 
+# user interest or preference start.....................................
 class UserInterestSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all())
     topics = serializers.PrimaryKeyRelatedField(many=True, queryset=Topic.objects.all())
@@ -148,3 +163,4 @@ class UserInterestDetailSerializer(serializers.ModelSerializer):
     # Method to fetch topic names instead of IDs
     def get_topic_names(self, obj):
         return [topic.name for topic in obj.topics.all()]        
+# user interest or preference end.......................................      
