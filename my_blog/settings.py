@@ -218,7 +218,6 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'access',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh',
     'JWT_AUTH_HTTPONLY': True,
-    'JWT_AUTH_SAMESITE':None,
     'SESSION_LOGIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': True,
     'REGISTER_SERIALIZER': 'myaccount.serializers.CustomRegisterSerializer',
@@ -244,8 +243,9 @@ ACCOUNT_ADAPTER = 'myaccount.serializers.CustomAccountAdapter'
 # cors headers
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://35.154.96.142",
 ]
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
