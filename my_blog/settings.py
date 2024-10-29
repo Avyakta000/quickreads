@@ -218,7 +218,10 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'access',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh',
     'JWT_AUTH_HTTPONLY': True,
+
     'JWT_AUTH_SAMESITE':None,
+    'JWT_AUTH_COOKIE_SECURE': False,
+
     'SESSION_LOGIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': True,
     'REGISTER_SERIALIZER': 'myaccount.serializers.CustomRegisterSerializer',
@@ -226,6 +229,9 @@ REST_AUTH = {
     'JWT_TOKEN_CLAIMS_SERIALIZER': 'myaccount.serializers.CustomTokenObtainPairSerializer',
 
 }
+
+SESSION_COOKIE_AGE = 1209600
+
 # Social auth (google) callback uri
 GOOGLE_CALLBACK_URL = env('GOOGLE_CALLBACK_URL')
 
