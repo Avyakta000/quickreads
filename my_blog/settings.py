@@ -218,10 +218,6 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'access',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh',
     'JWT_AUTH_HTTPONLY': True,
-
-    'JWT_AUTH_SAMESITE':None,
-    'JWT_AUTH_COOKIE_SECURE': False,
-
     'SESSION_LOGIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': True,
     'REGISTER_SERIALIZER': 'myaccount.serializers.CustomRegisterSerializer',
@@ -229,9 +225,6 @@ REST_AUTH = {
     'JWT_TOKEN_CLAIMS_SERIALIZER': 'myaccount.serializers.CustomTokenObtainPairSerializer',
 
 }
-
-SESSION_COOKIE_AGE = 1209600
-
 # Social auth (google) callback uri
 GOOGLE_CALLBACK_URL = env('GOOGLE_CALLBACK_URL')
 
@@ -248,11 +241,10 @@ SOCIALACCOUNT_PROVIDERS = {
 ACCOUNT_ADAPTER = 'myaccount.serializers.CustomAccountAdapter'
 
 # cors headers
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000"
-    # "http://35.154.96.142",
-]
-# CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
