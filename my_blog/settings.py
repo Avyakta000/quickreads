@@ -249,8 +249,8 @@ ACCOUNT_ADAPTER = 'myaccount.serializers.CustomAccountAdapter'
 
 # cors headers
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://35.154.96.142",
+    "http://localhost:3000"
+    # "http://35.154.96.142",
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
 
