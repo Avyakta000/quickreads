@@ -30,7 +30,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ['localhost', '35.154.96.142', '192.168.31.144', '172.25.204.241']
+ALLOWED_HOSTS = ['localhost', 'quicklit.in', 'www.quicklit.in', '35.154.96.142']
 
 
 # Application definition
@@ -218,6 +218,7 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'access',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh',
     'JWT_AUTH_HTTPONLY': True,
+    'JWT_AUTH_COOKIE_SECURE':True, 
     'SESSION_LOGIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': True,
     'REGISTER_SERIALIZER': 'myaccount.serializers.CustomRegisterSerializer',
@@ -242,7 +243,9 @@ ACCOUNT_ADAPTER = 'myaccount.serializers.CustomAccountAdapter'
 
 # cors headers
 # CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",
+#     'http://localhost:3000',
+#     'quicklit.in', 
+#     'www.quicklit.in'
 # ]
 CORS_ALLOW_ALL_ORIGINS = True
 
