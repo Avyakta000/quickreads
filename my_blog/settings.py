@@ -219,6 +219,7 @@ REST_AUTH = {
     'JWT_AUTH_REFRESH_COOKIE': 'refresh',
     'JWT_AUTH_HTTPONLY': True,
     'JWT_AUTH_COOKIE_SECURE':True, 
+    'JWT_AUTH_SAMESITE':None,
     'SESSION_LOGIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': True,
     'REGISTER_SERIALIZER': 'myaccount.serializers.CustomRegisterSerializer',
@@ -242,14 +243,21 @@ SOCIALACCOUNT_PROVIDERS = {
 ACCOUNT_ADAPTER = 'myaccount.serializers.CustomAccountAdapter'
 
 # cors headers
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',
-#     'quicklit.in', 
-#     'www.quicklit.in'
-# ]
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'https://www.quicklit.in',
+    'https://quicklit.in', 
+    'https://api.quicklit.in',
+]
+# CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
+
+# Cookie settings for Django session and CSRF
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # send email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
