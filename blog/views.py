@@ -14,8 +14,8 @@ from .services.s3_service import S3Service
 
 # fetch all categories and tags
 class FetchCategoriesAndTagsView(APIView):
-
-    # permission_classes = [AllowAny]
+    permission_classes = [AllowAny]
+    
     def get(self, request):
         try:
             categories = Category.objects.all()
@@ -177,6 +177,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class BlogListView(generics.ListAPIView):
+    # tag=topic
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = BlogSerializer
 
@@ -184,12 +185,12 @@ class BlogListView(generics.ListAPIView):
         queryset = Blog.objects.all()
 
         # Filter by category slug
-        category_slug = self.request.query_params.get('category_slug')
+        category_slug = self.request.query_params.get('category')
         if category_slug:
             queryset = queryset.filter(categories__slug=category_slug)
 
         # Filter by topic slug
-        topic_slug = self.request.query_params.get('topic_slug')
+        topic_slug = self.request.query_params.get('tag')
         if topic_slug:
             queryset = queryset.filter(topics__slug=topic_slug)
 
