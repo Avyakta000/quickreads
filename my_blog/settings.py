@@ -218,8 +218,9 @@ REST_AUTH = {
     'JWT_AUTH_COOKIE': 'access',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh',
     'JWT_AUTH_HTTPONLY': True,
-    'JWT_AUTH_COOKIE_SECURE':True, 
     'JWT_AUTH_SAMESITE':None,
+    # 'JWT_AUTH_SECURE':True,  for production
+    # 'JWT_AUTH_COOKIE_DOMAIN':'.quicklit.in', for production only
     'SESSION_LOGIN': False,
     'OLD_PASSWORD_FIELD_ENABLED': True,
     'REGISTER_SERIALIZER': 'myaccount.serializers.CustomRegisterSerializer',
