@@ -244,12 +244,8 @@ SOCIALACCOUNT_PROVIDERS = {
 ACCOUNT_ADAPTER = 'myaccount.serializers.CustomAccountAdapter'
 
 # cors headers
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'https://www.quicklit.in',
-    'https://quicklit.in', 
-    'https://api.quicklit.in',
-]
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 # CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
