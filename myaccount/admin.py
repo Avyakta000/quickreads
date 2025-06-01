@@ -11,8 +11,8 @@ admin.site.register(User, UserAdmin)
 
 @admin.register(ApplicationAPIKey)
 class ApplicationAPIKeyModelAdmin(APIKeyModelAdmin):
-    list_display = ('name', 'client_name', 'client_type', 'is_active', 'is_unlimited', 'usage_count', 'usage_limit')
-    search_fields = ('name', 'client_name', 'application')
-    list_filter = ('client_type', 'is_active', 'is_unlimited', 'created_at')
+    list_display = ('client_name', 'client_type', 'is_active', 'enforce_quota', 'usage_count', 'usage_limit')
+    search_fields = ('client_name', 'application')
+    list_filter = ('client_type', 'is_active', 'enforce_quota', 'created_at')
 
 admin.site.unregister(APIKey)
