@@ -32,3 +32,4 @@ s3transfer==0.10.3
 six==1.16.0
 sqlparse==0.5.1
 urllib3==2.2.3
+djangorestframework-api-key

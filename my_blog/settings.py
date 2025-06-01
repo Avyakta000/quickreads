@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 	# rest-framework
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_api_key',
 	# dj-rest-auth
 	'dj_rest_auth.registration',
     'dj_rest_auth',
@@ -193,12 +194,24 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_PERMISSION_CLASSES': (
+        # 'myaccount.permissions.HasApplicationAPIKey',
         'rest_framework.permissions.IsAuthenticated', 
     ),
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
-         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        'myaccount.authentication.ApplicationAPIKeyAuthentication', 
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
+
+    # rate limiting
+    'DEFAULT_THROTTLE_CLASSES': [
+        'blog.throttling.CustomAnonThrottle',
+        'blog.throttling.CustomUserThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/min',  
+        'user': '60/min', 
+    }
 }
 
 # simple jwt
@@ -296,5 +309,5 @@ STORAGES = {
 # URL for accessing media files
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 
-
-
+# API Key
+API_KEY_CUSTOM_MODEL = 'myaccount.ApplicationAPIKey'

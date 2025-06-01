@@ -11,10 +11,18 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db import models
 from .services.s3_service import S3Service
-
+from myaccount.authentication import ApplicationAPIKeyAuthentication
+from .mixins import APIKeyMixin
 # fetch all categories and tags
-class FetchCategoriesAndTagsView(APIView):
+class FetchCategoriesAndTagsView(APIKeyMixin, APIView):
+    authentication_classes = [ApplicationAPIKeyAuthentication]
     permission_classes = [AllowAny]
+
+    # initial method is called before the view is called, we can use it to enforce the api key quota
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        self.enforce_api_key_quota(request)
+
     
     def get(self, request):
         try:
@@ -36,12 +44,17 @@ class FetchCategoriesAndTagsView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class BlogViewSet(viewsets.ModelViewSet):
+class BlogViewSet(APIKeyMixin, viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Blog.objects.all()
     #  by default, DRF uses the primary key (usually the id field) as the lookup field, but we can customize this behavior.
     lookup_field = 'slug'
     # permission_classes = [IsAuthenticated]
+
+    def initial(self, request, *args, **kwargs):
+        # Call DRF's initial method first (runs auth, perms, etc.)
+        super().initial(request, *args, **kwargs)
+        self.enforce_api_key_quota(request)
 
     # serializer method
     def get_serializer_class(self):
@@ -176,10 +189,14 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(**validated_data)  
 
 
-class BlogListView(generics.ListAPIView):
+class BlogListView(APIKeyMixin, generics.ListAPIView):
     # tag=topic
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     serializer_class = BlogSerializer
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        self.enforce_api_key_quota(request)
 
     def get_queryset(self):
         queryset = Blog.objects.all()
