@@ -9,7 +9,9 @@ class APIKeyMixin:
     """
     # skip throttle for API key users, it's optional as the same thing is done in the throttling.py file
     def get_throttles(self):
-        if hasattr(self.request, "api_key"):
+        api_key = getattr(self.request, "api_key", None)
+        # Skip DRF throttling if API key present and apply_rate_limit is False
+        if api_key and not api_key.apply_rate_limit:
             return []
         return super().get_throttles()
     
@@ -18,4 +20,6 @@ class APIKeyMixin:
         if api_key:
             if not api_key.has_quota():
                 raise Throttled(detail="API key quota exceeded")
-            api_key.increment_usage()
+            # increment usage only if quota allows
+            if not api_key.increment_usage():
+                raise Throttled(detail="API key usage limit exceeded")

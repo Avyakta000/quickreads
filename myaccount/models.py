@@ -85,8 +85,9 @@ class ApplicationAPIKey(AbstractAPIKey):
     application = models.CharField(max_length=100, blank=True, help_text="Which app/service uses this key")
     purpose = models.TextField(blank=True, help_text="Describe purpose of key usage")
 
-    # Usage control
-    is_unlimited = models.BooleanField(default=False)
+    # Usage Controls
+    apply_rate_limit = models.BooleanField(default=False, help_text="Apply per-minute rate limit")
+    enforce_quota = models.BooleanField(default=True, help_text="Enforce total usage limit")
     usage_limit = models.PositiveIntegerField(default=1000)
     usage_count = models.PositiveIntegerField(default=0)
 
@@ -104,16 +105,18 @@ class ApplicationAPIKey(AbstractAPIKey):
         verbose_name_plural = "Application API Keys"
 
     def increment_usage(self):
-        """Tracks usage and enforces limits if not unlimited."""
-        if not self.is_unlimited:
-            if self.usage_count > self.usage_limit:
-                return False
+        """Tracks usage and enforces limits if quota is enabled."""
+        if self.enforce_quota and self.usage_count >= self.usage_limit:
+            return False
         self.usage_count += 1
         self.last_used_at = timezone.now()
         self.save(update_fields=["usage_count", "last_used_at"])
         return True
 
     def has_quota(self):
-        """Returns True if the key can be used."""
-        return self.is_active and (self.is_unlimited or self.usage_count < self.usage_limit)
-    
+        """True if usage is within limits or rate limiting is disabled."""
+        if not self.is_active:
+            return False
+        if self.enforce_quota and self.usage_count >= self.usage_limit:
+            return False
+        return True

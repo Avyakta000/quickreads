@@ -191,7 +191,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class BlogListView(APIKeyMixin, generics.ListAPIView):
     # tag=topic
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = BlogSerializer
 
     def initial(self, request, *args, **kwargs):
